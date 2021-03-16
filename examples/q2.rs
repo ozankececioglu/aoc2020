@@ -3,7 +3,7 @@ use regex::Regex;
 
 fn q2()
 {
-    let contents = fs::read_to_string("data/q2.txt")
+    let contents = fs::read_to_string("data/q2")
         .expect("Something went wrong reading the file");
     let mut correct = 0;
     for line in contents.lines() {
