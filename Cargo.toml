@@ -9,3 +9,4 @@ autoexamples = true
 
 [dependencies]
 regex = "1"
+linked_hash_set = "0.1.4"
