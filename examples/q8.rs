@@ -1,17 +1,18 @@
 use std::{fs, fs::File};
 use std::vec;
-use std::io::{self, prelude::*, BufReader, Cursor};
+use std::io::{self, prelude::*, BufReader, Cursor, Error, ErrorKind};
 use std::slice::Iter;
 use std::{iter, iter::Map};
 use std::collections::{HashSet, HashMap};
-use regex::{Regex, Captures};
-use std::ops::Index;
-use std::hash::Hash;
-use linked_hash_set::LinkedHashSet;
+use std::time::Instant;
+use std::{fmt, fmt::{Display, Formatter}};
 
 
 fn main() -> io::Result<()> {
-    let inp = Cursor::new("nop +0
+    let start = Instant::now();
+
+    let inp = Cursor::new(
+        "nop +0
 acc +1
 jmp +4
 acc +3
@@ -31,50 +32,115 @@ acc +6");
         Jmp(i32),
     }
 
+    impl Display for OpCode {
+        fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+            match self {
+                OpCode::Acc(x) => write!(f, "Acc({})", x),
+                OpCode::Nop(x) => write!(f, "Nop({})", x),
+                OpCode::Jmp(x) => write!(f, "Jmp({})", x),
+            };
+            return Ok(());
+        }
+    }
+
     let mut ops: Vec<OpCode> = Vec::new();
     for line in lines {
         let mut it = line.split_whitespace();
-        ops.push(match it.next().unwrap() {
-            "acc" => Ok(OpCode::Acc(it.next().unwrap().parse::<i32>().unwrap())),
-            "nop" => Ok(OpCode::Nop(it.next().unwrap().parse::<i32>().unwrap())),
-            "jmp" => Ok(OpCode::Jmp(it.next().unwrap().parse::<i32>().unwrap())),
+        let mut op = it.next().unwrap();
+        let mut val = it.next().unwrap().parse::<i32>().unwrap();
+        ops.push(match op {
+            "acc" => Ok(OpCode::Acc(val)),
+            "nop" => Ok(OpCode::Nop(val)),
+            "jmp" => Ok(OpCode::Jmp(val)),
             _ => Err("qwe")
         }.unwrap());
     }
 
-    #[derive(Clone, Default)]
-    struct OpState {
-        i: usize,
-        visit_set: HashSet<usize>,
-        visit_order: Vec<usize>,
+    struct OpState<'a> {
+        name: &'a str,
+        ip: usize,
+        visits: HashSet<usize>,
         acc: i32,
+        ops: &'a Vec<OpCode>,
     }
 
-    fn part1(prev_visit: &HashSet<usize>, mut acc: i32, mut ip: usize) {
-        let mut visited: HashSet<usize> = HashSet::new();
-        // let mut acc = 0;
-        // let mut ip: usize = 0; // instruction pointer
+    impl<'a> OpState<'a> {
+        fn advance(&mut self) {
+            self._step(false);
+        }
 
-        while !visited.contains(&ip) {
-            visited.insert(ip);
-            // println!("{}", i);
-            match ops[ip as usize] {
+        fn fork(&mut self) {
+            self._step(true);
+        }
+
+        fn _step(&mut self, rev: bool) {
+            let previp = self.ip;
+            self.visits.insert(self.ip);
+            match self.ops[self.ip] {
                 OpCode::Acc(x) => {
-                    acc += x;
-                    ip += 1;
+                    self.acc += x;
+                    self.ip += 1;
                 }
-                OpCode::Jmp(x) => ip = (ip as i32 + x) as usize,
-                OpCode::Nop(_) => ip += 1
+                OpCode::Jmp(x) => self.ip = if !rev { (self.ip as i32 + x) as usize } else { self.ip + 1 },
+                OpCode::Nop(x) => self.ip = if rev { (self.ip as i32 + x) as usize } else { self.ip + 1 },
+            }
+            println!("{}: {} -> {} -> {}", self.name, previp, self.ops[previp], self.ip);
+        }
+
+        fn is_acc(&self) -> bool {
+            match self.ops[self.ip] {
+                OpCode::Acc(_) => true,
+                _ => false
             }
         }
-        println!("{} {} {}", acc, visited.len(), ops.len());
+
+        fn get_op(&self) -> &OpCode { &self.ops[self.ip] }
+
+        fn new(ops_arg: &'a Vec<OpCode>, name: &'a str) -> OpState<'a> {
+            return OpState {
+                name,
+                ip: 0,
+                visits: HashSet::new(),
+                acc: 0,
+                ops: ops_arg,
+            };
+        }
     }
 
-    // Part 1
+    let mut state: OpState = OpState::new(&ops, "orig");
+    let mut fstate: OpState = OpState::new(&ops, "fork");
 
+    loop {
+        while state.is_acc() {
+            state.advance();
+        }
 
-    // Part 2
-    let mut forked_at: Option<usize> = None;
+        fstate.visits.clear();
+        fstate.ip = state.ip;
+        fstate.acc = state.acc;
+        fstate.fork();
+
+        while !state.visits.contains(&fstate.ip) & &!fstate.visits.contains(&fstate.ip) {
+            if fstate.ip < 0 || fstate.ip > ops.len() {
+                break;
+            }
+            if fstate.ip == ops.len() {
+                println!("!### {}", fstate.acc);
+                return Ok(());
+            }
+            fstate.visits.insert(fstate.ip);
+            fstate.advance();
+        }
+
+        if state.visits.contains(&state.ip) {
+            // println!("failed {}", );
+            return Err(Error::from(ErrorKind::InvalidData));
+        }
+        state.advance();
+    }
+
+    // println!("{} {} {}", acc, visits.len(), ops.len());
+
 
     Ok(())
 }
