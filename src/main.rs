@@ -1,20 +1,20 @@
 
 mod util;
 
-use std::{fs, fs::File};
+
 use std::vec;
-use std::io::{self, prelude::*, BufReader, Cursor, Error, ErrorKind};
-use std::slice::Iter;
-use std::{iter, iter::Map};
-use std::collections::{HashSet, HashMap};
-use regex::{Regex, Captures};
-use std::ops::Index;
+
+
+
+use std::collections::{HashSet};
+
+
 use regex::internal::Input;
-use std::cell::{Cell, RefCell, Ref};
-use std::rc::{Rc};
+
+
 use List::{Cons, Nil};
-use std::iter::FromIterator;
-use std::hash::Hash;
+
+
 
 
 // A linked list node, which can take on any of these two variants
@@ -75,9 +75,9 @@ fn main() {
     // Rc::get_mut(&mut a).unwrap().push("d");
     // dbg!(a);
 
-    let c = 2;
-    let a: HashSet<_> = vec!["asd"].iter().cloned().collect();
+    let _c = 2;
+    let _a: HashSet<_> = vec!["asd"].iter().cloned().collect();
 
 
-    let names = map!{ 1 => "one", 2 => "two" };
+    let _names = map!{ 1 => "one", 2 => "two" };
 }

@@ -1,11 +1,11 @@
-use std::{fs, fs::File};
+use std::{fs::File};
 use std::vec;
 use std::io::{self, prelude::*, BufReader};
-use std::slice::Iter;
-use std::{iter, iter::Map};
-use std::collections::{HashSet, HashMap};
-use regex::{Regex, Captures};
-use std::ops::Index;
+
+
+use std::collections::{HashMap};
+use regex::{Regex};
+
 
 
 fn main() -> io::Result<()> {

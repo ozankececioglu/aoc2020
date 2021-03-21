@@ -1,9 +1,9 @@
-use std::{fs, fs::File};
-use std::vec;
+use std::{fs::File};
+
 use std::io::{self, prelude::*, BufReader};
-use std::slice::Iter;
-use std::iter::Map;
-use std::collections::btree_set::BTreeSet;
+
+
+
 
 
 fn parse_seat(t: &str) -> i32 {
@@ -23,7 +23,7 @@ fn parse_seat(t: &str) -> i32 {
 fn main() -> io::Result<()> {
     let file = File::open("data/q5")?;
     let reader = BufReader::new(file);
-    let mut max_ticket = 0;
+    let _max_ticket = 0;
     let mut seats = Vec::new();
 
 

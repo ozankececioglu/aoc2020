@@ -1,8 +1,8 @@
-use std::{fs, fs::File};
-use std::vec;
+use std::{fs::File};
+
 use std::io::{self, prelude::*, BufReader};
-use std::slice::Iter;
-use std::iter::Map;
+
+
 
 
 fn main() -> io::Result<()> {

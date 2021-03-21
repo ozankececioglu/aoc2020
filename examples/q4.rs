@@ -1,10 +1,10 @@
-use std::{fs, fs::File};
-use std::vec;
+use std::{fs::File};
+
 use std::io::{self, prelude::*, BufReader};
-use std::slice::Iter;
-use std::{iter, iter::Map};
+
+use std::{iter};
 use std::collections::HashSet;
-use regex::{Regex, Captures};
+use regex::{Regex};
 
 
 struct Validator {

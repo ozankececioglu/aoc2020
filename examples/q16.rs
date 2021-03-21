@@ -1,16 +1,16 @@
-use std::{fs, fs::File};
-use std::vec;
-use std::io::{self, prelude::*, BufReader, Cursor, Error, ErrorKind};
-use std::slice::Iter;
-use std::{iter, iter::Map};
-use std::collections::{HashSet, HashMap};
-use regex::{Regex, Captures};
-use std::ops::Index;
-use std::fmt::{Display, Formatter};
+use std::{fs::File};
+
+use std::io::{self, prelude::*, BufReader, Cursor};
+
+
+use std::collections::{HashSet};
+use regex::{Regex};
+
+
 
 
 fn main() -> io::Result<()> {
-    let inp = Cursor::new(
+    let _inp = Cursor::new(
         "class: 1-3 or 5-7
 row: 6-11 or 33-44
 seat: 13-40 or 45-50
@@ -91,7 +91,7 @@ nearby tickets:
     let mut nums: Vec<i32> = Vec::new();
     'outer: for line in lines {
         nums.clear();
-        for (val) in line.split(',') {
+        for val in line.split(',') {
             let parsed = val.parse::<i32>().unwrap();
             nums.push(parsed);
             if !fields.iter().any(|f| f.check(parsed)) {

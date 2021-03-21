@@ -1,9 +1,9 @@
-use std::{fs, fs::File};
-use std::vec;
+use std::{fs::File};
+
 use std::io::{self, prelude::*, BufReader};
-use std::slice::Iter;
-use std::{iter, iter::Map};
-use std::collections::{HashSet, HashMap};
+
+use std::{iter};
+use std::collections::{HashMap};
 
 
 fn main() -> io::Result<()> {
