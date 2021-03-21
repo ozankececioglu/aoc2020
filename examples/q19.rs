@@ -1,4 +1,5 @@
 use std::{fs, fs::File};
+
 use std::vec;
 use std::io::{self, prelude::*, BufReader, Cursor, Error, ErrorKind};
 use std::slice::Iter;
@@ -10,6 +11,7 @@ use regex::internal::Input;
 use std::cell::{Cell, RefCell};
 use std::rc::{Rc, Weak};
 use std::borrow::Borrow;
+use std::hash::Hash;
 
 
 fn main() -> io::Result<()> {
@@ -50,12 +52,11 @@ aaaabbb");
         expanded: HashMap<usize, Rc<Vec<String>>>
     }
 
-
-    let mut rules: HashMap<usize, RuleType> = HashMap::new();
-    let mut expanded: HashMap<usize, Rc<Vec<String>>> = HashMap::new();
     let reg = Regex::new(
         r##"^(?P<id>\d+): ("(?P<str>.*)"|(?P<ref>\d+)|((?P<seq1>\d+) (?P<seq2>\d+))|((?P<disj1>.+) \| (?P<disj2>.+)))$"##).unwrap();
 
+    let mut rules: HashMap<usize, RuleType> = HashMap::new();
+    let mut expanded: HashMap<usize, Rc<Vec<String>>> = HashMap::new();
     for line in lines.iter() {
         if line.is_empty() {
             break;
@@ -84,6 +85,8 @@ aaaabbb");
 
         rules.insert(id, rule.unwrap());
     }
+
+    let recursive_rules = HashSet::from_iter(IntoIter::new([1]));
 
     fn expand_rule<'a>(id: usize, rules: &mut HashMap<usize, RuleType>, expanded: &mut HashMap<usize, Rc<Vec<String>>>) -> Rc<Vec<String>> {
         if let Some(r) = expanded.get(&id) {

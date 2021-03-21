@@ -1,3 +1,6 @@
+
+mod util;
+
 use std::{fs, fs::File};
 use std::vec;
 use std::io::{self, prelude::*, BufReader, Cursor, Error, ErrorKind};
@@ -10,7 +13,8 @@ use regex::internal::Input;
 use std::cell::{Cell, RefCell, Ref};
 use std::rc::{Rc};
 use List::{Cons, Nil};
-
+use std::iter::FromIterator;
+use std::hash::Hash;
 
 
 // A linked list node, which can take on any of these two variants
@@ -65,16 +69,15 @@ impl List {
     }
 }
 
+#[warn(unused_imports)]
 fn main() {
-    let mut a = vec![String::from("a")];
-    Rc::get_mut(&mut a).unwrap().push("d");
+    // let mut a = vec![String::from("a")];
+    // Rc::get_mut(&mut a).unwrap().push("d");
+    // dbg!(a);
+
+    let c = 2;
+    let a: HashSet<_> = vec!["asd"].iter().cloned().collect();
 
 
-    a.extend(i);
-
-
-    dbg!(a);
-
-
-
+    let names = map!{ 1 => "one", 2 => "two" };
 }
