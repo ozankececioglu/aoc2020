@@ -1,41 +1,17 @@
-mod util;
-
-use std::collections::HashMap;
-
-enum AEnum {
-    AVal(i32),
-    BVal,
-    CVal(String),
-}
-
-
-fn test(i: &mut i32, k: i32) {
-    *i += 1;
-}
-
-fn test2() {
-    let op = AEnum::AVal(3);
-    loop {
-        match op {
-            AEnum::AVal(_) => {}
-            AEnum::BVal => {
-                break;
-            }
-            AEnum::CVal(_) => {}
-        }
-    }
-}
-
-// fn main() {
-//     let a = 3;
-//     let b = 5;
-//     let c: Vec<i32> = (0..5).collect();
-//     println!("{:?}", c);
-// }
-
-
-// Allow Cons and Nil to be referred to without namespacing
+use std::{fs, fs::File};
+use std::vec;
+use std::io::{self, prelude::*, BufReader, Cursor, Error, ErrorKind};
+use std::slice::Iter;
+use std::{iter, iter::Map};
+use std::collections::{HashSet, HashMap};
+use regex::{Regex, Captures};
+use std::ops::Index;
+use regex::internal::Input;
+use std::cell::{Cell, RefCell, Ref};
+use std::rc::{Rc};
 use List::{Cons, Nil};
+
+
 
 // A linked list node, which can take on any of these two variants
 enum List {
@@ -90,9 +66,15 @@ impl List {
 }
 
 fn main() {
-    let a = 0;
-    for a in 0..3 {
+    let mut a = vec![String::from("a")];
+    Rc::get_mut(&mut a).unwrap().push("d");
 
-    }
+
+    a.extend(i);
+
+
     dbg!(a);
+
+
+
 }
