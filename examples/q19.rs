@@ -8,7 +8,7 @@ use std::collections::{HashSet, HashMap};
 use regex::{Regex, Captures};
 use std::ops::Index;
 use regex::internal::Input;
-use std::cell::{Cell, RefCell};
+use std::cell::{Cell, RefCell, Ref};
 use std::rc::{Rc, Weak};
 use std::borrow::Borrow;
 use std::hash::Hash;
@@ -16,7 +16,7 @@ use std::hash::Hash;
 
 fn main() -> io::Result<()> {
     let inp = Cursor::new(
-        "0: 4 1 5
+        "0: 4 19 5
 1: 2 3 | 3 2
 2: 4 4 | 5 5
 3: 4 5 | 5 4
@@ -29,7 +29,7 @@ abbbab
 aaabbb
 aaaabbb");
 
-    let file = File::open("data/q19")?;
+    let file = File::open("data/q19_2")?;
     let reader = BufReader::new(file);
     let lines = reader.lines().map(|l| l.unwrap()).collect::<Vec<String>>();
 
@@ -86,8 +86,11 @@ aaaabbb");
         rules.insert(id, rule.unwrap());
     }
 
-    // let recursive_rules: HashMap<_, _> = [0, 8, 11].iter()
-    //     .map(|r| (*r, rules.remove(r).unwrap())).collect();
+    let mut recursive_rules: HashMap<usize, RuleType> = HashMap::new();
+    if let RuleType::Ref(_) = &rules[&8] {} else {
+        recursive_rules = [0, 8, 11].iter()
+            .map(|r| (*r, rules.remove(r).unwrap())).collect();
+    }
 
     fn expand_rule<'a>(id: usize, rules: &mut HashMap<usize, RuleType>, expanded: &mut HashMap<usize, Rc<Vec<String>>>) -> Rc<Vec<String>> {
         if let Some(r) = expanded.get(&id) {
@@ -138,22 +141,24 @@ aaaabbb");
         expand_rule(*rules.keys().next().unwrap(), &mut rules, &mut expanded);
     }
 
-    let mut valid_messages = HashSet::new();
-    for v in expanded.values() {
+    let mut valid_messages = HashMap::new();
+    for (k, v) in expanded.iter() {
         for s in v.iter() {
-            valid_messages.insert(s.clone());
+            valid_messages.insert(s.clone(), k);
         }
     }
 
-    fn check_recursive_rule<'a>(input: &'a str,
-                            id: usize,
-                            rules: &HashMap<usize, RuleType>,
-                            expanded: &'a HashMap<usize, Rc<Vec<String>>>) -> Vec<&'a str> {
-        let mut res: Vec<&'a str> = Vec::new();
+    fn check_recursive_rule<'a>(input: &(&'a str, Vec<usize>),
+                                id: usize,
+                                rules: &HashMap<usize, RuleType>,
+                                expanded: &'a HashMap<usize, Rc<Vec<String>>>) -> Vec<(&'a str, Vec<usize>)> {
+        let mut res: Vec<(&'a str, Vec<usize>)> = Vec::new();
         if let Some(vals) = expanded.get(&id) {
             for v in vals.iter() {
-                if input.starts_with(v) {
-                    res.push(input.get(0..v.len()).unwrap());
+                if input.0.starts_with(v) {
+                    let mut r = input.1.clone();
+                    r.push(id);
+                    res.push((input.0.get(v.len()..).unwrap(), r));
                 }
             }
             return res;
@@ -165,32 +170,68 @@ aaaabbb");
                 return check_recursive_rule(input, *_id, rules, expanded);
             }
             RuleType::Sequence((id1, id2)) => {
-                let r1 = check_recursive_rule(input, *id1, rules, expanded);
-                for r in r1.iter() {
-                    let r2 = check_recursive_rule(r, *id2, rules, expanded);
-
+                let r1: Vec<(&'a str, Vec<usize>)> = check_recursive_rule(input, *id1, rules, expanded);
+                for r in r1.into_iter() {
+                    res.append(&mut check_recursive_rule(&r, *id2, rules, expanded));
                 }
             }
             RuleType::Disjunction((l1, l2)) => {
+                if l1.len() == 1 {
+                    res.append(&mut check_recursive_rule(input, l1[0], rules, expanded));
+                } else {
+                    let r1 = check_recursive_rule(input, l1[0], rules, expanded);
+                    for r in r1.into_iter() {
+                        res.append(&mut check_recursive_rule(&r, l1[1], rules, expanded));
+                    }
+                }
 
+                if res.iter().any(|x| x.0.is_empty()) {
+                    return res;
+                }
+
+                if l2.len() == 1 {
+                    res.append(&mut check_recursive_rule(input, l2[0], rules, expanded));
+                } else {
+                    let r1 = check_recursive_rule(input, l2[0], rules, expanded);
+                    let mut r2 = Vec::new();
+                    for r in r1.into_iter() {
+                        r2 = check_recursive_rule(&r, l2[1], rules, expanded);
+                    }
+                    if l2.len() == 3 {
+                        for r in r2.into_iter() {
+                            res.append(&mut check_recursive_rule(&r, l2[2], rules, expanded));
+                        }
+                    } else {
+                        res.append(&mut r2);
+                    }
+                }
             }
-            _ => { }
+            _ => {}
         };
 
         return res;
     }
 
     dbg!(&valid_messages.len());
+    dbg!(&expanded[&42]);
+    dbg!(&expanded[&31]);
 
+
+    let mut counts: HashMap<usize, i32> = HashMap::new();
     let mut count = 0;
-    for line in lines.iter() {
-        if valid_messages.contains(line) {
-            count += 1;
+    for (i, line) in lines.iter().enumerate() {
+        for r in recursive_rules.keys() {
+            let r = check_recursive_rule(&(line.as_str(), Vec::new()), 0, &recursive_rules, &expanded);
+            if let Some((_, y)) = r.iter().filter(|(x, _)| x.is_empty()).next() {
+                count += 1;
+                println!("{} {} {:?}", i, line, y);
+                break;
+            }
         }
     }
 
     dbg!(count);
-
+    dbg!(counts);
 
     Ok(())
 }

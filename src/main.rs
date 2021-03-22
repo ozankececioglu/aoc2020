@@ -80,7 +80,7 @@ fn main() {
     let mut c = b.clone();
     b = foo(b);
 
-    a.get(0..a.len());
+    dbg!(a.get(1..));
     dbg!("11foo1bar11".trim_start_matches("1"));
 
     dbg!(b);
