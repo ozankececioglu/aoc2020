@@ -1,20 +1,16 @@
-
 mod util;
 
 
 use std::vec;
 
 
-
-use std::collections::{HashSet};
+use std::collections::{HashSet, HashMap};
 
 
 use regex::internal::Input;
 
 
 use List::{Cons, Nil};
-
-
 
 
 // A linked list node, which can take on any of these two variants
@@ -75,13 +71,8 @@ fn foo(a: &str) -> &str {
 
 #[warn(unused_imports)]
 fn main() {
-    let mut a = "asd:qwe".to_owned();
-    let mut b = a.as_str();
-    let mut c = b.clone();
-    b = foo(b);
+    let a = std::u64::MAX;
+    dbg!(a);
+    dbg!(a + 65);
 
-    dbg!(a.get(1..));
-    dbg!("11foo1bar11".trim_start_matches("1"));
-
-    dbg!(b);
 }
