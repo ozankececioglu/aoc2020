@@ -135,8 +135,8 @@
 31: 99 123 | 63 97
 4: 57 97 | 131 123
 77: 123 104 | 97 83
-8: 42
-11: 42 31
+8: 42 | 42 8
+11: 42 31 | 42 11 31
 
 bababbbbbbbaabbabbbbaaab
 baaaabbbabaaabbbaabbabbbabbbbbaa

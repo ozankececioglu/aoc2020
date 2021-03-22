@@ -69,15 +69,19 @@ impl List {
     }
 }
 
+fn foo(a: &str) -> &str {
+    return a.split(":").next().unwrap();
+}
+
 #[warn(unused_imports)]
 fn main() {
-    // let mut a = vec![String::from("a")];
-    // Rc::get_mut(&mut a).unwrap().push("d");
-    // dbg!(a);
+    let mut a = "asd:qwe".to_owned();
+    let mut b = a.as_str();
+    let mut c = b.clone();
+    b = foo(b);
 
-    let _c = 2;
-    let _a: HashSet<_> = vec!["asd"].iter().cloned().collect();
+    a.get(0..a.len());
+    dbg!("11foo1bar11".trim_start_matches("1"));
 
-
-    let _names = map!{ 1 => "one", 2 => "two" };
+    dbg!(b);
 }

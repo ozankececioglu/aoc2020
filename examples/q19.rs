@@ -44,12 +44,12 @@ aaaabbb");
         set: Weak<RuleSet<'a>>,
         id: usize,
         tip: RuleType<'a>,
-        recursive: bool
+        recursive: bool,
     }
 
     struct RuleSet<'a> {
         rules: HashMap<usize, RuleType<'a>>,
-        expanded: HashMap<usize, Rc<Vec<String>>>
+        expanded: HashMap<usize, Rc<Vec<String>>>,
     }
 
     let reg = Regex::new(
@@ -86,7 +86,8 @@ aaaabbb");
         rules.insert(id, rule.unwrap());
     }
 
-    let recursive_rules = HashSet::from_iter(IntoIter::new([1]));
+    // let recursive_rules: HashMap<_, _> = [0, 8, 11].iter()
+    //     .map(|r| (*r, rules.remove(r).unwrap())).collect();
 
     fn expand_rule<'a>(id: usize, rules: &mut HashMap<usize, RuleType>, expanded: &mut HashMap<usize, Rc<Vec<String>>>) -> Rc<Vec<String>> {
         if let Some(r) = expanded.get(&id) {
@@ -137,15 +138,49 @@ aaaabbb");
         expand_rule(*rules.keys().next().unwrap(), &mut rules, &mut expanded);
     }
 
-    dbg!(&expanded[&8]);
-
     let mut valid_messages = HashSet::new();
     for v in expanded.values() {
         for s in v.iter() {
             valid_messages.insert(s.clone());
         }
     }
-    dbg!(valid_messages.len());
+
+    fn check_recursive_rule<'a>(input: &'a str,
+                            id: usize,
+                            rules: &HashMap<usize, RuleType>,
+                            expanded: &'a HashMap<usize, Rc<Vec<String>>>) -> Vec<&'a str> {
+        let mut res: Vec<&'a str> = Vec::new();
+        if let Some(vals) = expanded.get(&id) {
+            for v in vals.iter() {
+                if input.starts_with(v) {
+                    res.push(input.get(0..v.len()).unwrap());
+                }
+            }
+            return res;
+        }
+
+        let rule = &rules[&id];
+        match rule {
+            RuleType::Ref(_id) => {
+                return check_recursive_rule(input, *_id, rules, expanded);
+            }
+            RuleType::Sequence((id1, id2)) => {
+                let r1 = check_recursive_rule(input, *id1, rules, expanded);
+                for r in r1.iter() {
+                    let r2 = check_recursive_rule(r, *id2, rules, expanded);
+
+                }
+            }
+            RuleType::Disjunction((l1, l2)) => {
+
+            }
+            _ => { }
+        };
+
+        return res;
+    }
+
+    dbg!(&valid_messages.len());
 
     let mut count = 0;
     for line in lines.iter() {
