@@ -10,10 +10,10 @@ use std::ops::Index;
 
 fn main() -> io::Result<()> {
     let inp = Cursor::new(
-        "mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X
-mem[8] = 11
-mem[7] = 101
-mem[8] = 0");
+        "mask = 000000000000000000000000000000X1001X
+mem[42] = 100
+mask = 00000000000000000000000000000000X0XX
+mem[26] = 1");
 
     let file = File::open("data/q14")?;
     let reader = BufReader::new(file);
@@ -22,36 +22,41 @@ mem[8] = 0");
     let mem_reg = Regex::new(r##"mem\[(?P<mem>\d+)] = (?P<val>\d+)"##).unwrap();
     let mask_reg = Regex::new(r##"mask = (?P<mask>.*)"##).unwrap();
 
-    let mut over = 0;
     let mut memory: HashMap<u64, u64> = HashMap::new();
-    let mut mask = (0 as u64, 0 as u64);
+    let mut mask = "";
     for line in lines.iter().map(|l| l.as_str()) {
         if line.starts_with("mem") {
             let caps = mem_reg.captures(line).unwrap();
-            let mem = caps.name("mem").unwrap().as_str()
+            let mut address = caps.name("mem").unwrap().as_str()
                 .parse::<u64>().unwrap();
             let val = caps.name("val").unwrap().as_str().parse::<u64>().unwrap();
-            let res = (val & mask.0) | mask.1;
-            println!("{} => {}\n{:04$b}\n{:04$b}", line, res, val, res, 36);
 
-            if let Some(v) = memory.insert(mem, res) { over += 1; }
-        } else {
-            let maskstr = mask_reg.captures(line).unwrap().name("mask").unwrap().as_str();
-            mask.0 = 0;
-            mask.1 = 0;
-            for c in maskstr.chars() {
-                mask.0 <<= 1;
-                mask.1 <<= 1;
+            // println!("{}\n{:02$b}", mask, address, 36);
+            let mut comb: Vec<usize> = Vec::new();
+            for (i, c) in mask.chars().rev().enumerate() {
                 match c {
-                    '1' => {
-                        mask.1 += 1;
-                        mask.0 += 1;
-                    }
-                    '0' => (),
-                    _ => { mask.0 += 1 }
+                    '1' => address = address | (1 << i),
+                    'X' => comb.push(i),
+                    _ => ()
                 }
             }
-            println!("mask\n{}\n{:03$b}\n{:03$b}", maskstr, mask.0, mask.1, 36);
+
+            // println!("{:01$b}", address, 36);
+
+            fn make_comb(memory: &mut HashMap<u64, u64>, address: u64, val: u64, comb: &Vec<usize>, i: usize) {
+                if i < comb.len() {
+                    let j = comb[i];
+                    make_comb(memory, address | (1 << j), val, comb, i + 1);
+                    make_comb(memory, address & !(1 << j), val, comb, i + 1);
+                } else {
+                    memory.insert(address, val);
+                    // println!("{:01$b}", address, 36);
+                }
+            }
+            make_comb(&mut memory, address, val, &comb, 0);
+            // println!("-----");
+        } else {
+            mask = mask_reg.captures(line).unwrap().name("mask").unwrap().as_str();
         }
     }
 
@@ -60,12 +65,12 @@ mem[8] = 0");
         total += *v;
     }
     dbg!(total);
-
-    let mut keys = memory.keys().collect::<Vec<_>>();
-    keys.sort();
-    for k in keys {
-        println!("{}: {}", k, memory[k]);
-    }
+    //
+    // let mut keys = memory.keys().collect::<Vec<_>>();
+    // keys.sort();
+    // for k in keys {
+    //     println!("{}: {}", k, memory[k]);
+    // }
     Ok(())
 }
 

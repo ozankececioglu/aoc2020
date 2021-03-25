@@ -71,8 +71,6 @@ fn foo(a: &str) -> &str {
 
 #[warn(unused_imports)]
 fn main() {
-    let a = std::u64::MAX;
-    dbg!(a);
-    dbg!(a + 65);
+    dbg!(1 as u32 & !(2) as u32 );
 
 }
