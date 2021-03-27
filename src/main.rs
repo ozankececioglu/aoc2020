@@ -1,16 +1,13 @@
 mod util;
 
-
 use std::vec;
-
-
 use std::collections::{HashSet, HashMap};
-
-
 use regex::internal::Input;
-
+use multiarray::{Array2D, Dim2};
 
 use List::{Cons, Nil};
+use std::convert::TryInto;
+use arrayvec::ArrayVec;
 
 
 // A linked list node, which can take on any of these two variants
@@ -71,6 +68,7 @@ fn foo(a: &str) -> &str {
 
 #[warn(unused_imports)]
 fn main() {
-    dbg!(1 as u32 & !(2) as u32 );
-
+    let a = [1, 3, 5, 8];
+    let b = [1, 3, 5];
+    dbg!(a[0..4] == b);
 }

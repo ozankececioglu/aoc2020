@@ -10,13 +10,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "anyrange"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "97d59d03a70e06f9b9396f6d73ae81d9bc349ab5eef4c971eab0733cd981de66"
+
+[[package]]
 name = "aoc2021"
 version = "0.1.0"
 dependencies = [
+ "arrayvec",
  "itertools",
  "linked_hash_set",
+ "multiarray",
  "regex",
 ]
+
+[[package]]
+name = "arrayvec"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "682f88bd1270f264991da8922b89ee1fb520b0da73f97c9f73cda54980123017"
 
 [[package]]
 name = "either"
@@ -53,6 +67,15 @@ name = "memchr"
 version = "2.3.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0ee1c47aaa256ecabcaea351eae4a9b01ef39ed810004e298d2511ed284b1525"
+
+[[package]]
+name = "multiarray"
+version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5b2d808612ad02ebf12564e0a4d11f8ba37fa8972924a6839941c303e9693a33"
+dependencies = [
+ "anyrange",
+]
 
 [[package]]
 name = "once_cell"
