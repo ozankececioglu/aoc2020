@@ -1,3 +1,5 @@
+// #![feature(generators, generator_trait)]
+
 use std::{fs, fs::File};
 use std::vec;
 use std::io::{self, prelude::*, BufReader, Cursor, Error, ErrorKind};
@@ -9,6 +11,10 @@ use std::ops::Index;
 use arrayvec::ArrayVec;
 
 
+// use std::ops::Generator;
+// use std::pin::Pin;
+
+
 fn in_range<T: std::cmp::PartialOrd>(val: T, min: T, max: T) -> bool {
     return val > min && val < max;
 }
@@ -16,7 +22,11 @@ fn in_range<T: std::cmp::PartialOrd>(val: T, min: T, max: T) -> bool {
 fn print_seats(seats: &Vec<Vec<u8>>) {
     for i in seats {
         for j in i {
-            print!("{}", j);
+            print!("{}", match *j {
+                0 => '.',
+                1 => 'L',
+                _ => '#'
+            });
         }
         println!();
     }
@@ -38,7 +48,11 @@ fn main() -> io::Result<()> {
     let mut seats2 = seats1.clone();
     let mut turn = 0;
 
-    let nb: [(i32, i32); 8] = [(-1, -1), (0, -1), (-1, 0), (0, 1), (1, 0), (1, 1), (1, -1), (-1, 1)];
+    dbg!("{}", turn);
+    print_seats(&seats1);
+    println!();
+
+    let nb: [(i32, i32); 8] = [(-1, -1), (0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0)];
 
     let mut same_state = false;
     while !same_state {
@@ -56,46 +70,53 @@ fn main() -> io::Result<()> {
         same_state = true;
         for x in 0..curr.len() as i32 {
             'next_seat: for y in 0..curr[x as usize].len() as i32 {
-                if curr[x as usize][y as usize] == 2 {
-                    let mut occupied = 0;
-                    for n in nb.iter() {
-                        if curr.get((n.0 + x) as usize)
+                let seat = curr[x as usize][y as usize];
+                if seat == 0 {
+                    continue;
+                }
+
+                let mut occupied = 0;
+                'next_dir: for n in nb.iter() {
+                    let mut pos = (x, y);
+                    loop {
+                        pos.0 += n.0;
+                        pos.1 += n.1;
+                        let s = *curr.get(pos.0 as usize)
                             .map_or(
-                                false,
-                                |c: &Vec<u8>| c.get((n.1 + y) as usize)
-                                    .map_or(false, |d| *d == (2 as u8)),
-                            ) {
-                            occupied += 1;
-                            if occupied >= 4 {
+                                &(1 as u8),
+                                |c: &Vec<u8>| c.get(pos.1 as usize)
+                                    .unwrap_or(&(1 as u8)),
+                            );
+                        if s == 2 {
+                            if seat == 2 {
+                                occupied += 1;
+                                if occupied >= 5 {
+                                    next[x as usize][y as usize] = 1;
+                                    same_state = false;
+                                    continue 'next_seat;
+                                } else {
+                                    continue 'next_dir;
+                                }
+                            } else if seat == 1 {
                                 next[x as usize][y as usize] = 1;
-                                same_state = false;
                                 continue 'next_seat;
                             }
+                        } else if s == 1 {
+                            break;
                         }
                     }
-                    next[x as usize][y as usize] = 2;
+                }
 
-                } else if curr[x as usize][y as usize] == 1 {
-                    for n in nb.iter() {
-                        if curr.get((n.0 + x) as usize)
-                            .map_or(
-                                false,
-                                |c: &Vec<u8>| c.get((n.1 + y) as usize)
-                                    .map_or(false, |d| *d == (2 as u8)),
-                            ) {
-                            next[x as usize][y as usize] = 1;
-                            continue 'next_seat;
-                        }
-                    }
-
-                    next[x as usize][y as usize] = 2;
+                next[x as usize][y as usize] = 2;
+                if seat == 1 {
                     same_state = false;
                 }
             }
         }
 
-        println!("{}", turn);
-        print_seats(&curr);
+        println!();
+        println!("=============== {}", turn);
+        print_seats(&next);
 
         if same_state {
             println!("{} {}", next.iter().flat_map(|s| s).filter(|s| **s == 2).count(), turn);
