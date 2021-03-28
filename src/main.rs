@@ -70,5 +70,5 @@ fn foo(a: &str) -> &str {
 fn main() {
     let a = [1, 3, 5, 8];
     let b = [1, 3, 5];
-    dbg!(a[0..4] == b);
+    dbg!(a);
 }
