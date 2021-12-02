@@ -8,9 +8,11 @@ use multiarray::{Array2D, Dim2};
 use List::{Cons, Nil};
 use std::convert::TryInto;
 use arrayvec::ArrayVec;
+use num::bigint::BigInt;
 
 
 // A linked list node, which can take on any of these two variants
+#[derive(Debug)]
 enum List {
     // Cons: Tuple struct that wraps an element and a pointer to the next node
     Cons(u32, Box<List>),
@@ -68,7 +70,5 @@ fn foo(a: &str) -> &str {
 
 #[warn(unused_imports)]
 fn main() {
-    let a = [1, 3, 5, 8];
-    let b = [1, 3, 5];
-    dbg!(a);
+    BigInt::from(3).clone();
 }
