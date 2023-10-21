@@ -1,17 +1,17 @@
-use std::{fs, fs::File};
-use std::vec;
+use std::{fs::File};
+
 use std::io::{self, prelude::*, BufReader, Cursor, Error, ErrorKind};
-use std::slice::Iter;
-use std::{iter, iter::Map};
-use std::collections::{HashSet, HashMap};
+
+
+use std::collections::{HashSet};
 use std::time::Instant;
 use std::{fmt, fmt::{Display, Formatter}};
 
 
 fn main() -> io::Result<()> {
-    let start = Instant::now();
+    let _start = Instant::now();
 
-    let inp = Cursor::new(
+    let _inp = Cursor::new(
         "nop +0
 acc +1
 jmp +4
@@ -46,8 +46,8 @@ acc +6");
     let mut ops: Vec<OpCode> = Vec::new();
     for line in lines {
         let mut it = line.split_whitespace();
-        let mut op = it.next().unwrap();
-        let mut val = it.next().unwrap().parse::<i32>().unwrap();
+        let op = it.next().unwrap();
+        let val = it.next().unwrap().parse::<i32>().unwrap();
         ops.push(match op {
             "acc" => Ok(OpCode::Acc(val)),
             "nop" => Ok(OpCode::Nop(val)),

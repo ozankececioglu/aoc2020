@@ -1,18 +1,18 @@
-use std::{fs, fs::File};
-use std::vec;
-use std::cell;
-use std::io::{self, prelude::*, BufReader, Cursor, Error, ErrorKind};
-use std::slice::Iter;
-use std::{iter, iter::Map};
-use std::collections::{HashSet, HashMap};
-use regex::{Regex, Captures};
-use std::ops::Index;
-use std::char::UNICODE_VERSION;
+use std::{fs::File};
+
+
+use std::io::{self, prelude::*, BufReader, Cursor};
+
+
+use std::collections::{HashMap};
+
+
+
 use std::cell::Cell;
 
 
 fn main() -> io::Result<()> {
-    let inp = Cursor::new(
+    let _inp = Cursor::new(
         ".#.
 ..#
 ###
@@ -96,7 +96,7 @@ fn main() -> io::Result<()> {
         }
     }
 
-    for r in 0..6 {
+    for _r in 0..6 {
         let mut passive: HashMap<Pos, i32> = HashMap::new();
         for (k, v) in active.iter() {
             v.set(0);

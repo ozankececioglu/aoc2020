@@ -1,15 +1,15 @@
-use std::{fs, fs::File};
-use std::vec;
-use std::io::{self, prelude::*, BufReader, Cursor, Error, ErrorKind};
-use std::slice::Iter;
-use std::{iter, iter::Map};
-use std::collections::{HashSet, HashMap};
-use regex::{Regex, Captures};
-use std::ops::Index;
+use std::{fs::File};
+
+use std::io::{self, prelude::*, BufReader, Cursor};
+
+
+use std::collections::{HashMap};
+use regex::{Regex};
+
 
 
 fn main() -> io::Result<()> {
-    let inp = Cursor::new(
+    let _inp = Cursor::new(
         "mask = 000000000000000000000000000000X1001X
 mem[42] = 100
 mask = 00000000000000000000000000000000X0XX

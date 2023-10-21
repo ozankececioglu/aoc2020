@@ -1,8 +1,9 @@
+#![allow(warnings)]
+
 mod util;
 
 use std::vec;
 use std::collections::{HashSet, HashMap};
-use regex::internal::Input;
 use multiarray::{Array2D, Dim2};
 
 use List::{Cons, Nil};
@@ -69,6 +70,31 @@ fn foo(a: &str) -> &str {
 }
 
 #[warn(unused_imports)]
+
+
+fn chinese_remainder_theorem(residues: Vec<u64>, modulii: Vec<u64>) -> Option<u64> {
+    let prod: u64 = modulii.iter().product();
+    
+    let mut sum = u64::from(0u32);
+    
+    for (residue, modulus) in residues.into_iter().zip(modulii.into_iter()) {
+        let p = &prod / &modulus;
+        sum += residue * mod_inv(&p, &modulus)? * &p;
+    }
+
+    Some(sum % prod)
+}
+
+fn mod_pow(base: &u64, exp: &u64, n: &u64) -> u64 {
+    (base ** exp) % n
+}
+
+fn mod_inv(x: &u64, modulus: &u64) -> Option<u64> {
+    let a = modulus - u64::from(2u32);
+    Option::Some(mod_pow(&x, &a, modulus))
+}
+
+// Usage
 fn main() {
-    BigInt::from(3).clone();
+
 }

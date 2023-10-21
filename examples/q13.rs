@@ -10,37 +10,62 @@ use num::bigint::BigInt;
 use itertools::Itertools;
 
 
-fn main() -> io::Result<()> {
-    let inp = Cursor::new(
-        "");
+fn chinese_remainder_theorem(vals: &Vec<(BigInt, BigInt)>) -> BigInt {
+    
+    let prod: BigInt = vals.iter().map(|(_, m)| m).product();
+    println!("prod: {}", prod);
+    
+    let mut sum = BigInt::from(0u32);
+    
+    for (residue, modulus) in vals.iter() {
+        let p = &prod / modulus;
+        sum += residue * mod_inv(&p, modulus) * p;
+    }
 
+    sum % prod
+}
+
+/// x ^ (m - 2) % m
+/// 
+fn mod_inv(x: &BigInt, modulus: &BigInt) -> BigInt {
+    let a = modulus - BigInt::from(2u32);
+    x.modpow(&a, modulus)
+}
+
+
+
+fn main() -> io::Result<()> {
     let file = File::open("data/q13")?;
     let reader = BufReader::new(file);
     let mut lines = reader.lines().map(|l| l.unwrap());
+    lines.next();
 
-    let mut depart = lines.next().unwrap().parse::<u32>().unwrap();
     let buses = lines.next().unwrap().split(',')
-        .map(|b| b.parse::<u32>().unwrap_or(0))
+        .map(|b| b.parse::<BigInt>().unwrap_or(BigInt::from(0)))
         .enumerate()
-        .filter(|(i, b)| *b > 0)
-        .collect::<Vec<_>>();
+        .filter(|x| x.1 > BigInt::from(0))
+        .map(|(x, y)| (&y - x, y))
+        .collect::<Vec<_>>();    
 
-    let mut it = buses.into_iter();
-    let (i, m) = it.next().unwrap();
-    let mut result = BigInt::from(0);
-    for next in it.into_iter() {
-        let k = (next.0 - i) as i32; /// diff
+    // 7,13,x,x,59,x,31,19
+    // let buses = vec![
+    //     (0, BigInt::from(7)), 
+    //     (12, BigInt::from(13)), 
+    //     (55, BigInt::from(59)),
+    //     (25, BigInt::from(31)),
+    //     (12, BigInt::from(19))
+    // ];
 
+    let res = chinese_remainder_theorem(&buses);
 
-        let n = BigInt::from(next.1);
-        //
-        let (i, m) = next;
+    println!("{:?}", res);
+
+    let res = 1068781;
+
+    for (i, b) in buses.iter() {
+        println!("{}: {}, {}", i, b, &res % b);
     }
-
-
-
-    // dbg!(mintime * bus);
-
+    
     Ok(())
 }
 

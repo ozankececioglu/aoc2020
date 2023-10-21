@@ -7,7 +7,6 @@ use std::{iter, iter::Map};
 use std::collections::{HashSet, HashMap};
 use regex::{Regex, Captures};
 use std::ops::Index;
-use regex::internal::Input;
 use std::cell::{Cell, RefCell, Ref};
 use std::rc::{Rc, Weak};
 use std::borrow::Borrow;

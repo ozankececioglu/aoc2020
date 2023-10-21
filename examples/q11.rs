@@ -1,14 +1,14 @@
 // #![feature(generators, generator_trait)]
 
-use std::{fs, fs::File};
-use std::vec;
-use std::io::{self, prelude::*, BufReader, Cursor, Error, ErrorKind};
-use std::slice::Iter;
-use std::{iter, iter::Map};
-use std::collections::{HashSet, HashMap};
-use regex::{Regex, Captures};
-use std::ops::Index;
-use arrayvec::ArrayVec;
+use std::{fs::File};
+
+use std::io::{self, prelude::*, BufReader, Cursor};
+
+
+
+
+
+
 
 
 // use std::ops::Generator;
@@ -34,7 +34,7 @@ fn print_seats(seats: &Vec<Vec<u8>>) {
 
 
 fn main() -> io::Result<()> {
-    let inp = Cursor::new(
+    let _inp = Cursor::new(
         "");
 
     let file = File::open("data/q11")?;

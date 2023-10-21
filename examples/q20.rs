@@ -1,13 +1,13 @@
-use std::{fs, fs::File};
-use std::vec;
-use std::io::{self, prelude::*, BufReader, Cursor, Error, ErrorKind};
-use std::slice::Iter;
-use std::{iter, iter::Map};
+use std::{fs::File};
+
+use std::io::{self, prelude::*, BufReader, Cursor};
+
+
 use std::collections::{HashSet, HashMap};
-use regex::{Regex, Captures};
-use std::ops::Index;
-use itertools::{sorted};
-use std::any::Any;
+use regex::{Regex};
+
+
+
 use std::convert::TryInto;
 // use std::slice;
 
@@ -120,7 +120,7 @@ fn test() {
 }
 
 fn main2() {
-    let inp = Cursor::new(
+    let _inp = Cursor::new(
         "");
 
     const NTILES: usize = 12;
@@ -144,7 +144,7 @@ fn main2() {
             }
         }
 
-        let mut bs: Vec<([bool; 10], BorderDir)> = [
+        let bs: Vec<([bool; 10], BorderDir)> = [
             (tile[0].clone(), BorderDir::Top),
             (tile[tile.len() - 1].clone(), BorderDir::Bottom),
             (left_border(&tile), BorderDir::Left),
@@ -282,7 +282,7 @@ fn main2() {
         for j in 0..NTILES {
             let tile = &tiles[&map[i][j]];
             for x in 1..9 {
-                let mut r = image.get_mut((i * 8 + x - 1)).unwrap();
+                let r = image.get_mut(i * 8 + x - 1).unwrap();
                 r[j * 8..(j + 1) * 8].copy_from_slice(&tile[x][1..9]);
             }
         }
@@ -325,11 +325,11 @@ fn main2() {
         return nummonsters;
     }
 
-    let mut score = image.iter().fold(0, |x, y|
+    let score = image.iter().fold(0, |x, y|
         x + y.iter().filter(|k| **k).count());
     dbg!(score);
 
-    let mut nummonsters = 0;
+    let _nummonsters = 0;
     for _ in 0..4 {
         dbg!(check_monsters(&image, &see_monster));
         rotate_ccw(&mut image);
