@@ -1,16 +1,16 @@
-use std::{fs, fs::File};
-use std::vec;
-use std::io::{self, prelude::*, BufReader, Cursor, Error, ErrorKind};
-use std::slice::Iter;
-use std::{iter, iter::Map};
-use std::collections::{HashSet, HashMap, VecDeque};
-use regex::{Regex, Captures};
-use std::ops::Index;
+use std::{fs::File};
+
+use std::io::{self, prelude::*, BufReader, Cursor};
+
+
+use std::collections::{VecDeque};
+
+
 use linked_hash_set::LinkedHashSet;
 
 
 fn main() -> io::Result<()> {
-    let inp = Cursor::new(
+    let _inp = Cursor::new(
         "35
 20
 15
@@ -45,7 +45,7 @@ fn main() -> io::Result<()> {
     'outer: for line in lines {
         let number = line.parse::<i64>().unwrap();
 
-        for i in numbers.iter() {
+        for _i in numbers.iter() {
             if !numbers.iter().any(|n| numbers.contains(&(number - n))) {
                 found = number;
                 break 'outer;

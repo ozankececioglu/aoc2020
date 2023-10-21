@@ -1,13 +1,13 @@
-use std::{fs, fs::File};
-use std::vec;
-use std::io::{self, prelude::*, BufReader, Cursor, Error, ErrorKind};
-use std::slice::Iter;
-use std::{iter, iter::Map};
-use std::collections::{HashSet, HashMap};
-use regex::{Regex, Captures};
-use std::ops::Index;
-use std::any::Any;
-use std::panic::resume_unwind;
+use std::{fs::File};
+
+use std::io::{self, prelude::*, BufReader, Cursor};
+
+use std::{iter};
+
+use regex::{Regex};
+
+
+
 
 //
 // fn part1() {
@@ -71,7 +71,7 @@ use std::panic::resume_unwind;
 
 
 fn main() -> io::Result<()> {
-    let inp = Cursor::new(
+    let _inp = Cursor::new(
         "2 * 3 + (4 * 5)
 5 + (8 * 3 + 9 + 3 * 4 * 3)
 5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))
@@ -93,7 +93,7 @@ fn main() -> io::Result<()> {
     fn do_context<'a, T>(iter: &mut T) -> i64
         where T: Iterator<Item=Token>
     {
-        let mut result = 0 as i64;
+        let _result = 0 as i64;
         let mut tokens: Vec<Token> = Vec::new();
         loop {
             /// Process Enter and Exit tokens

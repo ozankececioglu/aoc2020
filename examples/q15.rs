@@ -1,15 +1,15 @@
-use std::{fs, fs::File};
-use std::vec;
-use std::io::{self, prelude::*, BufReader, Cursor, Error, ErrorKind};
-use std::slice::Iter;
-use std::{iter, iter::Map};
-use std::collections::{HashSet, HashMap};
-use regex::{Regex, Captures};
-use std::ops::{Index};
+
+
+use std::io::{self, prelude::*, Cursor};
+
+
+use std::collections::{HashMap};
+
+
 
 
 fn main() -> io::Result<()> {
-    let inp = Cursor::new(
+    let _inp = Cursor::new(
         "3,1,2");
 
     // Given the starting numbers 1,3,2, the 2020th number spoken is 1.
@@ -20,7 +20,7 @@ fn main() -> io::Result<()> {
     // Given the starting numbers 3,1,2, the 2020th number spoken is 1836.
 
     let str = std::fs::read_to_string("data/q15").unwrap();
-    let mut lines = str.split(",")
+    let lines = str.split(",")
         .map(|n| n.parse::<i64>().unwrap()).collect::<Vec<_>>();
 
     let mut spoken: HashMap<i64, i64> = HashMap::new();

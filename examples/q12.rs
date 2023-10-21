@@ -1,13 +1,13 @@
-use std::{fs, fs::File};
-use std::vec;
-use std::io::{self, prelude::*, BufReader, Cursor, Error, ErrorKind};
-use std::slice::Iter;
-use std::{iter, iter::Map};
-use std::collections::{HashSet, HashMap};
-use regex::{Regex, Captures};
-use num::integer::lcm;
-use num::bigint::BigInt;
-use itertools::Itertools;
+use std::{fs::File};
+
+use std::io::{self, prelude::*, BufReader};
+
+
+
+
+
+
+
 
 
 enum Direction {
@@ -59,7 +59,7 @@ impl Direction {
 fn main() -> io::Result<()> {
     let file = File::open("data/q12")?;
     let reader = BufReader::new(file);
-    let mut lines = reader.lines().map(|l| l.unwrap());
+    let lines = reader.lines().map(|l| l.unwrap());
     
     let vals = lines.map(|l| {
         let captures = regex::Regex::new(r"(\w)(\d+)").unwrap().captures(&l).unwrap();

@@ -1,20 +1,20 @@
-use std::{fs, fs::File};
+use std::{fs::File};
 
 use std::vec;
 use std::io::{self, prelude::*, BufReader, Cursor, Error, ErrorKind};
-use std::slice::Iter;
-use std::{iter, iter::Map};
-use std::collections::{HashSet, HashMap};
-use regex::{Regex, Captures};
-use std::ops::Index;
-use std::cell::{Cell, RefCell, Ref};
+
+
+use std::collections::{HashMap};
+use regex::{Regex};
+
+
 use std::rc::{Rc, Weak};
-use std::borrow::Borrow;
-use std::hash::Hash;
+
+
 
 
 fn main() -> io::Result<()> {
-    let inp = Cursor::new(
+    let _inp = Cursor::new(
         "0: 4 19 5
 1: 2 3 | 3 2
 2: 4 4 | 5 5
@@ -68,7 +68,7 @@ aaaabbb");
             rule = Some(RuleType::Leaf(x.as_str()));
         } else if let Some(x) = ca.name("ref") {
             rule = Some(RuleType::Ref(x.as_str().parse().unwrap()));
-        } else if let Some(seq1) = ca.name("seq1") {
+        } else if let Some(_seq1) = ca.name("seq1") {
             let seq1 = ca.name("seq1").unwrap().as_str().parse().unwrap();
             let seq2 = ca.name("seq2").unwrap().as_str().parse().unwrap();
             rule = Some(RuleType::Sequence((seq1, seq2)));
@@ -109,7 +109,7 @@ aaaabbb");
         }
 
         let rule = rules.remove(&id).unwrap();
-        let mut expansion = match rule {
+        let expansion = match rule {
             RuleType::Leaf(t) => Rc::new(vec![t.to_owned()]),
             RuleType::Ref(id) => expand_rule(id, rules, expanded).clone(),
             RuleType::Sequence((id1, id2)) => {
@@ -216,10 +216,10 @@ aaaabbb");
     dbg!(&expanded[&31]);
 
 
-    let mut counts: HashMap<usize, i32> = HashMap::new();
+    let counts: HashMap<usize, i32> = HashMap::new();
     let mut count = 0;
     for (i, line) in lines.iter().enumerate() {
-        for r in recursive_rules.keys() {
+        for _r in recursive_rules.keys() {
             let r = check_recursive_rule(&(line.as_str(), Vec::new()), 0, &recursive_rules, &expanded);
             if let Some((_, y)) = r.iter().filter(|(x, _)| x.is_empty()).next() {
                 count += 1;
