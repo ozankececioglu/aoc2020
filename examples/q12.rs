@@ -1,15 +1,7 @@
 use std::{fs::File};
-
 use std::io::{self, prelude::*, BufReader};
 
-
-
-
-
-
-
-
-
+#[derive(PartialEq)]
 enum Direction {
     North,
     South,
@@ -34,22 +26,26 @@ impl Direction {
         }
     }
 
-    fn apply(&self, pos: &mut (i32, i32, i32), val: i32) {
+    fn apply(&self, pos: &mut (i32, i32), wp: &mut (i32, i32), val: &i32) {
         match self {
-            Direction::North => pos.1 += val,
-            Direction::South => pos.1 -= val,
-            Direction::East => pos.0 += val,
-            Direction::West => pos.0 -= val,
-            Direction::Right => pos.2 -= val,
-            Direction::Left => pos.2 += val,
-            Direction::Forward => {
-                match (pos.2 % 360 + 360) % 360 {
-                    0 => pos.0 += val,
-                    90 => pos.1 += val,
-                    180 => pos.0 -= val,
-                    270 => pos.1 -= val,
-                    v => panic!("no such val {}", v)
+            Direction::North => wp.1 += val,
+            Direction::South => wp.1 -= val,
+            Direction::East => wp.0 += val,
+            Direction::West => wp.0 -= val,
+            Direction::Right | Direction::Left => {
+                let mut angle = ((val % 360) + 360 % 360) / 90;
+                if *self == Direction::Right {
+                    angle = 4 - angle;
                 }
+                for _ in 0..angle {
+                    let tmp = wp.0;
+                    wp.0 = -wp.1;
+                    wp.1 = tmp;
+                }
+            },
+            Direction::Forward => {
+                pos.0 += wp.0 * val;
+                pos.1 += wp.1 * val;
             }
         }
     }
@@ -61,15 +57,15 @@ fn main() -> io::Result<()> {
     let reader = BufReader::new(file);
     let lines = reader.lines().map(|l| l.unwrap());
     
+    let reg = regex::Regex::new(r"(\w)(\d+)").unwrap();
     let vals = lines.map(|l| {
-        let captures = regex::Regex::new(r"(\w)(\d+)").unwrap().captures(&l).unwrap();
-        (Direction::from(&captures[1]), captures[2].parse::<i32>())
+        let captures = reg.captures(&l).unwrap();
+        (Direction::from(&captures[1]), captures[2].parse::<i32>().unwrap())
     });
 
-    // println!("{:?}", vals.collect::<Vec<_>>());
-
-    let mut origin = (0, 0, 0);
-    vals.for_each(|(d, v)| d.apply(&mut origin, v.unwrap()));
+    let mut origin = (0, 0);
+    let mut waypoint = (10, 1);
+    vals.for_each(|(d, v)| d.apply(&mut origin, &mut waypoint, &v));
 
     println!("{:?}", origin);
 
